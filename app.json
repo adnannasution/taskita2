@@ -1,30 +1,23 @@
 {
   "expo": {
-    "name": "TasKita",
-    "slug": "TasKita",
+    "name": "Tas Kita",
+    "slug": "tas-kita",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "scheme": "taskita",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
+      "backgroundColor": "#FAF6F0"
     },
     "android": {
+      "package": "com.taskita.app",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+        "backgroundColor": "#FAF6F0"
+      }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": ["expo-router"]
   }
 }
