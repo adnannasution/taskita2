@@ -1,17 +1,19 @@
+// GorenganKu - tema hijau teal mint
 export const colors = {
-  background: '#FAF6F0',
+  background: '#E0F2F1',
   surface: '#FFFFFF',
-  primary: '#A85C32',
-  primaryDark: '#7A4322',
-  accent: '#C9A227',
-  textPrimary: '#2B2420',
-  textSecondary: '#73685E',
-  textMuted: '#A89E92',
-  border: '#E8E0D4',
-  success: '#4F7942',
-  warning: '#D9A441',
+  primary: '#00695C',
+  primaryDark: '#004D40',
+  accent: '#FFB300',
+  textPrimary: '#00251A',
+  textSecondary: '#37474F',
+  textMuted: '#78909C',
+  border: '#B2DFDB',
+  success: '#2E7D32',
+  warning: '#F57F17',
   danger: '#B5453B',
   white: '#FFFFFF',
+  statusBar: '#004D40',   // warna background status bar HP
 };
 
 export const fonts = {

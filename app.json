@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "scheme": "taskita",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#FAF6F0"
     },
@@ -18,6 +18,17 @@
         "backgroundColor": "#FAF6F0"
       }
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-font"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a1f17049-51be-4af5-b949-af5e3d19d692"
+      }
+    }
   }
 }

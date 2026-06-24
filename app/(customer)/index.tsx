@@ -1,6 +1,9 @@
 import { useCallback, useState } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, RefreshControl } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import {
+  View, Text, FlatList, Image, StyleSheet,
+  TouchableOpacity, RefreshControl,
+} from 'react-native';
+import { useFocusEffect, router } from 'expo-router';
 import { getDb } from '../../src/db/client';
 import { colors, fonts, spacing, radius } from '../../src/constants/theme';
 import { formatRupiah } from '../../src/utils/format';
@@ -18,11 +21,7 @@ export default function CatalogScreen() {
     setProducts(rows);
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadProducts();
-    }, [loadProducts])
-  );
+  useFocusEffect(useCallback(() => { loadProducts(); }, [loadProducts]));
 
   async function handleRefresh() {
     setRefreshing(true);
@@ -32,10 +31,6 @@ export default function CatalogScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Tas Kita</Text>
-        <Text style={styles.subtitle}>Koleksi tas pilihan</Text>
-      </View>
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
@@ -43,61 +38,79 @@ export default function CatalogScreen() {
         contentContainerStyle={styles.list}
         columnWrapperStyle={styles.row}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
+        ListHeaderComponent={
+          <Text style={styles.subtitle}>Koleksi tas pilihan untuk kamu</Text>
+        }
         ListEmptyComponent={
-          <Text style={styles.empty}>Belum ada produk. Admin bisa menambahkan dari menu Produk.</Text>
+          <Text style={styles.empty}>Belum ada produk tersedia.</Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View style={styles.imagePlaceholder}>
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.7}
+            onPress={() => router.push({ pathname: '/(customer)/product-detail', params: { id: String(item.id) } })}
+          >
+            <View style={styles.imageBox}>
               {item.photo_uri ? (
-                <Image source={{ uri: item.photo_uri }} style={styles.image} />
+                <Image source={{ uri: item.photo_uri }} style={styles.image} resizeMode="cover" />
               ) : (
-                <Text style={styles.imagePlaceholderText}>Tas Kita</Text>
+                <View style={styles.imageFallback}>
+                  <Text style={styles.imageFallbackText}>🛍️</Text>
+                </View>
+              )}
+              {item.stock === 0 && (
+                <View style={styles.soldOutOverlay}>
+                  <Text style={styles.soldOutText}>Habis</Text>
+                </View>
               )}
             </View>
-            <Text style={styles.productName} numberOfLines={2}>
-              {item.name}
-            </Text>
-            <Text style={styles.productPrice}>{formatRupiah(item.price)}</Text>
-            <Text style={styles.productStock}>{item.stock > 0 ? `Stok ${item.stock}` : 'Stok habis'}</Text>
-          </View>
+            <View style={styles.cardInfo}>
+              <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
+              {item.category ? <Text style={styles.productCategory}>{item.category}</Text> : null}
+              <Text style={styles.productPrice}>{formatRupiah(item.price)}</Text>
+              <Text style={styles.productStock}>
+                {item.stock > 0 ? `Stok: ${item.stock}` : 'Stok habis'}
+              </Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
     </View>
   );
 }
 
-const CARD_WIDTH = '48%';
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
-  title: { fontFamily: fonts.display, fontSize: 26, color: colors.primary },
-  subtitle: { fontFamily: fonts.body, fontSize: 13, color: colors.textSecondary, marginTop: 2 },
-  list: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
+  subtitle: {
+    fontFamily: fonts.body, fontSize: 13, color: colors.textSecondary,
+    paddingHorizontal: spacing.xs, paddingTop: spacing.sm, paddingBottom: spacing.md,
+  },
+  list: { padding: spacing.md, paddingBottom: spacing.xl },
   row: { justifyContent: 'space-between' },
   card: {
-    width: CARD_WIDTH,
+    width: '48.5%',
     backgroundColor: colors.surface,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: spacing.sm,
     marginBottom: spacing.md,
-  },
-  imagePlaceholder: {
-    height: 110,
-    borderRadius: radius.sm,
-    backgroundColor: colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
     overflow: 'hidden',
   },
+  imageBox: { width: '100%', height: 130, position: 'relative' },
   image: { width: '100%', height: '100%' },
-  imagePlaceholderText: { fontFamily: fonts.displayMedium, color: colors.textMuted, fontSize: 13 },
-  productName: { fontFamily: fonts.bodyMedium, fontSize: 13, color: colors.textPrimary },
-  productPrice: { fontFamily: fonts.bodySemiBold, fontSize: 14, color: colors.primary, marginTop: 4 },
-  productStock: { fontFamily: fonts.body, fontSize: 11, color: colors.textMuted, marginTop: 2 },
-  empty: { fontFamily: fonts.body, fontSize: 13, color: colors.textMuted, textAlign: 'center', marginTop: spacing.xl },
+  imageFallback: {
+    flex: 1, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: colors.background,
+  },
+  imageFallbackText: { fontSize: 36 },
+  soldOutOverlay: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center',
+  },
+  soldOutText: { fontFamily: fonts.bodySemiBold, color: colors.white, fontSize: 14 },
+  cardInfo: { padding: spacing.sm },
+  productName: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.textPrimary, lineHeight: 17 },
+  productCategory: { fontFamily: fonts.body, fontSize: 10, color: colors.textMuted, marginTop: 1 },
+  productPrice: { fontFamily: fonts.bodySemiBold, fontSize: 13, color: colors.primary, marginTop: 3 },
+  productStock: { fontFamily: fonts.body, fontSize: 10, color: colors.textMuted, marginTop: 1 },
 });

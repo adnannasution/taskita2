@@ -8,6 +8,7 @@ import {
 } from '@expo-google-fonts/playfair-display';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import { AuthProvider } from '../src/context/AuthContext';
+import { CartProvider } from '../src/context/CartContext';
 import { initDb } from '../src/db/client';
 import { seedDatabase } from '../src/db/seed';
 import { colors } from '../src/constants/theme';
@@ -40,7 +41,9 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <CartProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </CartProvider>
     </AuthProvider>
   );
 }
